@@ -8,14 +8,30 @@
 #include <string.h>
 
 void main() {
+	//Create socket 
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    struct sockaddr_in addr = {
-        AF_INET,
-        htons(8080),
-        0
-    };
-    bind(sockfd, &addr, sizeof(addr));
+    if (sockfd < 0) {
+	    perror("Socket creation failed");
+	    return -1;
+    }		
+
+    //Address setup
+    struct sockaddr_in addr;
+        addr.sin_family = AF_INET;
+        addr.sin_port = htons(8080);
+	addr.sin_addr.s_addr = INADDR_ANY;
+
+	//bind socket
+
+if (bind(sockfd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+perror("bind failed");
+	return -1;
+
+}
+
+//Listen for connections
     listen(sockfd, 10);
+
     int clientfd = accept(sockfd, NULL, NULL);
     SSL_CTX* ctx = SSL_CTX_new(TLS_server_method());
     SSL*ssl = SSL_new(ctx);
