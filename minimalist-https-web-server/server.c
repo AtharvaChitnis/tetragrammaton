@@ -29,10 +29,15 @@ perror("bind failed");
 
 }
 
-//Listen for connections
+	//Listen for connections
     listen(sockfd, 10);
 
+    //Accept client connection
     int clientfd = accept(sockfd, NULL, NULL);
+    if (clientfd < 0) {
+perror("CLient connection failed");
+return -1;
+    }
     SSL_CTX* ctx = SSL_CTX_new(TLS_server_method());
     SSL*ssl = SSL_new(ctx);
     SSL_set_fd(ssl,clientfd);
