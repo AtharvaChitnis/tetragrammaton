@@ -38,17 +38,27 @@ perror("bind failed");
 perror("CLient connection failed");
 return -1;
     }
+
+//SSL setup
     SSL_CTX* ctx = SSL_CTX_new(TLS_server_method());
     SSL*ssl = SSL_new(ctx);
     SSL_set_fd(ssl,clientfd);
     SSL_use_certificate_chain_file(ssl,"fullChain");
     SSL_use_PrivateKey_file(ssl, "theKey", SSL_FILETYPE_PEM);
-    SSL_accept(ssl);
+
+if (SSL_accept(ssl) <= 0) {
+perror("SSL accept failed");
+SSL_free(ssl);
+return -1;
+}
+
+//Read from client
     char buffer[1024] = {0};
     SSL_read(ssl, buffer,1023);
-// GET/file.......
 
-char* file_request = buffer + 5;
+//File request handling
+char* file_request = buffer + 5;// assuming GET/file.......
+
 char response[1024] = {0};
 char* metadata = "HTTP/1.0.200 OK\r\nContent-Type: text/html\r\n\r\n";
                                         
