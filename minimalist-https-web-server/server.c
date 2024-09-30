@@ -71,8 +71,18 @@ if (strncmp(file_request, "index.html ", 11) ==0){
     char* error = "No page4 found";
     memcpy(response + strlen(metadata), error, strlen(error));
 }
-SSL_write(ssl, response, 1024);
+
+//Send response
+SSL_write(ssl,response,strlen(response));
+
+//Cleanup
 SSL_shutdown(ssl);
+SSL_free(SSL);
+SSL_CTX_free(ctx);
+close(clientfd);
+close(sockfd);
+
+return 0;
 }
 
 
